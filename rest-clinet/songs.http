@@ -1,0 +1,16 @@
+# songs get
+GET http://localhost:3000/songs
+
+
+
+
+# songs create
+POST http://localhost:3000/songs
+Content-Type: application/json
+
+{
+	"title":"pieash",
+    "artists":["pieash khan"],
+    "releaseDate":"2022-09-22",
+    "duration":"23:23"
+}
