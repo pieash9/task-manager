@@ -21,7 +21,7 @@ export class SongsController {
     private readonly songsService: SongsService,
     @Inject('CONNECTION') private readonly connection: Connection,
   ) {
-    console.log(this.connection);
+    console.log(this.connection.CONNECTION_STRING);
   }
 
   @Post()
