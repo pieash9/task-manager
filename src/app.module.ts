@@ -10,9 +10,31 @@ import { SongsModule } from './songs/songs.module';
 import { LoggerMiddleware } from './common/middleware/logger/logger.middleware';
 import { SongsController } from './songs/songs.controller';
 import { DevConfigService } from './common/providers/DevConfigServicet';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { Song } from './songs/songs.entity';
+
+const devConfig = {
+  port: 3000,
+};
+const proConfig = {
+  port: 400,
+};
 
 @Module({
-  imports: [SongsModule],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      database: 'postgres',
+      host: 'aws-0-ap-southeast-1.pooler.supabase.com',
+      port: 6543,
+      username: 'postgres.assvtxocygyiftibahbg',
+      password: 'EB6xdQaetTjUsJa1',
+      entities: [Song],
+      synchronize: true,
+    }),
+    SongsModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
@@ -20,9 +42,19 @@ import { DevConfigService } from './common/providers/DevConfigServicet';
       provide: DevConfigService,
       useClass: DevConfigService,
     },
+    {
+      provide: 'CONFIG',
+      useFactory: () => {
+        return process.env.NODE_ENV === 'development' ? devConfig : proConfig;
+      },
+    },
   ],
 })
 export class AppModule implements NestModule {
+  constructor(private dataSource: DataSource) {
+    console.log('dbName', dataSource.driver.database);
+  }
+
   configure(consumer: MiddlewareConsumer) {
     // consumer.apply(LoggerMiddleware).forRoutes('songs');
     // consumer.apply(LoggerMiddleware).forRoutes({

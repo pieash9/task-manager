@@ -10,38 +10,26 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Scope,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDto } from './dto/create-song.dto';
-import { Connection } from 'src/common/constants/connections';
+import { Song } from './songs.entity';
+import { UpdateSongDto } from './dto/update-song.dto';
+import { UpdateResult } from 'typeorm';
 
-@Controller('songs')
+@Controller({ path: 'songs', scope: Scope.REQUEST })
 export class SongsController {
-  constructor(
-    private readonly songsService: SongsService,
-    @Inject('CONNECTION') private readonly connection: Connection,
-  ) {
-    console.log(this.connection.CONNECTION_STRING);
-  }
+  constructor(private readonly songsService: SongsService) {}
 
   @Post()
-  async create(@Body() createSongDTO: CreateSongDto) {
+  async create(@Body() createSongDTO: CreateSongDto): Promise<Song> {
     return await this.songsService.create(createSongDTO);
   }
 
   @Get()
-  findAll() {
-    try {
-      return this.songsService.findAll();
-    } catch (error) {
-      throw new HttpException(
-        'Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        {
-          cause: error,
-        },
-      );
-    }
+  findAll(): Promise<Song[]> {
+    return this.songsService.findAll();
   }
 
   @Get(':id')
@@ -50,18 +38,21 @@ export class SongsController {
       'id',
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
-    id: string,
+    id: number,
   ) {
-    return `This get one returns a ${id} song`;
+    return this.songsService.findOne(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string) {
-    return `This update returns a ${id} song`;
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateSongDTO: UpdateSongDto,
+  ): Promise<UpdateResult> {
+    return this.songsService.update(id, updateSongDTO);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return `This delete returns a ${id} song`;
+  delete(@Param('id') id: number) {
+    return this.songsService.remove(+id);
   }
 }
