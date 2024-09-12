@@ -14,9 +14,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { Song } from './songs/songs.entity';
 import { ArtistModule } from './artist/artist.module';
-import { UserModule } from './user/user.module';
+import { UserModule } from './users/user.module';
 import { Artist } from './artist/entities/artist.entity';
-import { User } from './user/entities/user.entity';
+import { User } from './users/entities/user.entity';
+import { AuthModule } from './auth/auth.module';
 
 const devConfig = {
   port: 3000,
@@ -40,6 +41,7 @@ const proConfig = {
     SongsModule,
     ArtistModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
