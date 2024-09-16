@@ -13,6 +13,7 @@ import { UserModule } from './users/user.module';
 import { Artist } from './artist/entities/artist.entity';
 import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { dataSourceOptions } from 'db/data-source';
 
 const devConfig = {
   port: 3000,
@@ -23,16 +24,7 @@ const proConfig = {
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      database: 'postgres',
-      host: 'aws-0-ap-southeast-1.pooler.supabase.com',
-      port: 6543,
-      username: 'postgres.assvtxocygyiftibahbg',
-      password: 'EB6xdQaetTjUsJa1',
-      entities: [Song, Artist, User],
-      synchronize: true,
-    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     SongsModule,
     ArtistModule,
     UserModule,
