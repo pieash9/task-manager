@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { SeedService } from './seed/seed.service';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as express from 'express';
+import { join } from 'path';
 declare const module: any;
 
 async function bootstrap() {
@@ -37,6 +38,8 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   await app.listen(configService.get<number>('port'));
+  // Serve static assets from 'public' directory
+  app.use(express.static(join(__dirname, '..', 'public')));
 
   console.log(configService.get<string>('NODE_ENV'));
 

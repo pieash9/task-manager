@@ -22,5 +22,9 @@ module.exports = function (options, webpack) {
         autoRestart: false,
       }),
     ],
+    output: {
+      path: path.resolve(__dirname, 'public'), // Set output directory to 'public'
+      filename: '[name].js',
+    },
   };
 };
